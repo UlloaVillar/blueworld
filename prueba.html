@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Comparison Slider</title>
+    <!-- Estilos de la librería -->
+    <link rel="stylesheet" href="https://unpkg.com/image-comparison-slider/dist/image-comparison-slider.css">
+    <style>
+        /* Opcional: centrado y ajuste del contenedor */
+        .image-comparison-slider {
+            max-width: 800px;
+            margin: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Prueba del Image Comparison Slider</h1>
+    <!-- Contenedor del slider -->
+    <div class="image-comparison-slider" data-width="100%">
+        <div class="image-comparison__before">
+            <img src="https://via.placeholder.com/800x400?text=Before" alt="Before Image">
+        </div>
+        <div class="image-comparison__after">
+            <img src="https://via.placeholder.com/800x400?text=After" alt="After Image">
+        </div>
+    </div>
+
+    <!-- Script de la librería -->
+    <script src="https://unpkg.com/image-comparison-slider/dist/image-comparison-slider.min.js"></script>
+    <script>
+        // Inicialización del slider
+        document.addEventListener("DOMContentLoaded", () => {
+            new ImageComparisonSlider(document.querySelector(".image-comparison-slider"));
+        });
+    </script>
+</body>
+</html>
