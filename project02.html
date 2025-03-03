@@ -22,6 +22,10 @@
     <link href="css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Six+Caps&display=swap" rel="stylesheet"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
    
 </head>    
 
@@ -197,68 +201,245 @@
                             
                             <!-- Row -->
                             <div class="content-row full light-section" data-bgcolor="#f9f9f9">
-                                
-                                <div class="clapat-slider-wrapper content-slider looped-carousel has-animation autocenter dark-cursor">
-        							<div class="clapat-slider">
-                                        <div class="clapat-slider-viewport">
-                                            <div class="clapat-slide"><div class="slide-img"><img src="images/projects/fold01.jpg" alt="Image Title"></div></div>
-                                            <div class="clapat-slide"><div class="slide-img"><img src="images/projects/fold02.jpg" alt="Image Title"></div></div>
-                                            <div class="clapat-slide"><div class="slide-img"><img src="images/projects/fold03.jpg" alt="Image Title"></div></div>
-                                            <div class="clapat-slide"><div class="slide-img"><img src="images/projects/fold04.jpg" alt="Image Title"></div></div>
+                                <div class="custom-carousel">
+                                    <div class="carousel-nav left"></div>
+                                    <div class="carousel-nav right"></div>
+                                    <div class="carousel-container">
+                                        <div class="carousel-slide">
+                                            <div class="chart-container">
+                                                <canvas id="salaryChart"></canvas>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="carousel-slide">
+                                            <div class="chart-container">
+                                                <canvas id="emptyHousingChart"></canvas>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="carousel-slide">
+                                            <div class="chart-container">
+                                                <canvas id="unemploymentChart"></canvas>
+                                            </div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="clapat-controls">
-                                        <div class="clapat-button-next slider-button-next"></div>
-                                        <div class="clapat-button-prev slider-button-prev"></div>
-                                        <div class="clapat-pagination"></div>
-                                    </div>
                                 </div>
-                                
                             </div> 
                             <!--/Row -->
 
-                            <!-- Row -->
-                            <div class="content-row row_padding_top light-section change-header-color text-align-center" data-bgcolor="#eee">
-                            
-                                <h1 class="primary-font-title has-mask-fill">The Challenge</h1>
-                                <p>
-                                    <span class="has-opacity">BALANCING URBAN OPPORTUNITIES WITH AFFORDABLE LIVING</span>
-                                    <br class="destroy">
-                                    <span class="has-opacity">WHILE REVITALIZING RURAL COMMUNITIES</span>
-                                </p>
+                            <style>
+                                .custom-carousel {
+                                    width: 100%;
+                                    position: relative;
+                                    padding: 0;
+                                    overflow: hidden;
+                                }
                                 
-                                <hr><hr>
+                                .carousel-container {
+                                    display: flex;
+                                    justify-content: center;
+                                    gap: 60px;
+                                    width: 100%;
+                                    padding: 0 30px;
+                                    transition: transform 0.5s ease;
+                                }
+                                
+                                .carousel-slide {
+                                    width: calc(33.333% - 40px);
+                                    flex-shrink: 0;
+                                }
+                                
+                                .chart-container {
+                                    width: 100%;
+                                    height: 350px;
+                                    background: white;
+                                    padding: 25px;
+                                    border-radius: 10px;
+                                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                                    position: relative;
+                                }
+
+                                .carousel-nav {
+                                    position: absolute;
+                                    top: 0;
+                                    width: 50%;
+                                    height: 100%;
+                                    z-index: 10;
+                                    cursor: pointer;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    background: rgba(0,0,0,0);
+                                    transition: background 0.3s;
+                                }
+
+                                .carousel-nav:hover {
+                                    background: rgba(0,0,0,0.02);
+                                }
+
+                                .carousel-nav.left {
+                                    left: 0;
+                                }
+
+                                .carousel-nav.right {
+                                    right: 0;
+                                }
+
+                                @media (max-width: 768px) {
+                                    .carousel-container {
+                                        flex-direction: column;
+                                        align-items: center;
+                                        gap: 40px;
+                                        padding: 0;
+                                    }
+                                    
+                                    .carousel-slide {
+                                        width: 100%;
+                                        max-width: 500px;
+                                    }
+
+                                    .carousel-nav {
+                                        display: none;
+                                    }
+                                }
+                            </style>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const defaultOptions = {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        animation: {
+                                            duration: 0
+                                        },
+                                        plugins: {
+                                            legend: {
+                                                display: true,
+                                                position: 'top'
+                                            }
+                                        }
+                                    };
+
+                                    // Configuración del carrusel
+                                    const container = document.querySelector('.carousel-container');
+                                    const slides = document.querySelectorAll('.carousel-slide');
+                                    const navLeft = document.querySelector('.carousel-nav.left');
+                                    const navRight = document.querySelector('.carousel-nav.right');
+                                    let currentIndex = 0;
+
+                                    function updateCarousel() {
+                                        const slideWidth = slides[0].offsetWidth;
+                                        const gap = 60; // El espacio entre slides
+                                        const offset = -(currentIndex * (slideWidth + gap));
+                                        container.style.transform = `translateX(${offset}px)`;
+                                    }
+
+                                    function moveCarousel(direction) {
+                                        if (window.innerWidth <= 768) return; // No mover en móvil
+
+                                        if (direction === 'left' && currentIndex > 0) {
+                                            currentIndex--;
+                                        } else if (direction === 'right' && currentIndex < slides.length - 3) {
+                                            currentIndex++;
+                                        }
+                                        
+                                        updateCarousel();
+                                    }
+
+                                    // Event listeners para navegación
+                                    navLeft.addEventListener('click', () => moveCarousel('left'));
+                                    navRight.addEventListener('click', () => moveCarousel('right'));
+
+                                    // Actualizar carrusel cuando cambia el tamaño de la ventana
+                                    window.addEventListener('resize', updateCarousel);
+
+                                    // Inicializar carrusel
+                                    updateCarousel();
+
+                                    // Gráficas...
+                                    // ... existing chart code ...
+                                });
+                            </script>
+
+                            <!-- Row -->
+                             
+                            <!--/Row -->
+                            
+                            
+                            <!-- Row -->
+                            
+                            <!--/Row -->
+                        
+                        
+                            <!-- Row -->
+                            <div class="content-row row_padding_top row_padding_bottom light-section change-header-color" data-bgcolor="#eee">
+                                
+                                <div class="pinned-section">
+                                    <div class="scrolling-element left">
+                                        <figure class="has-animation">
+                                            <a href="images/projects/green02.jpg" class="image-link"><img src="images/houses/hemeroteca.png" alt="Image Title"></a>
+                                        </figure>
+                                    </div>
+                                    
+                                    <div class="pinned-element right">
+                                        <h1 class="primary-font-title has-mask-fill">Rising Costs</h1>
+                                   		<p><span class="has-opacity">THE COST OF LIVING AND HOUSING CONTINUES TO SKYROCKET IN URBAN AREAS, WITH RENTAL PRICES CONSUMING UP TO 45% OF THE AVERAGE SALARY. THIS UNSUSTAINABLE TREND IS CREATING A GENERATION OF PERPETUAL RENTERS, UNABLE TO SAVE FOR THEIR FUTURE.</span></p>
+                                    </div>
+                                </div>                                
                                 
                             </div> 
                             <!--/Row -->
                             
                             
                             <!-- Row -->
-                            <div class="content-row text-align-center light-section change-header-color" data-bgcolor="#eee">
+                            <div class="content-row row_padding_top row_padding_bottom light-section change-header-color" data-bgcolor="#eee">                                
                                 
-                                
-                                <div class="pinned-gallery">
-                                    <div class="pinned-image">
-                                        <img src="images/projects/nano01.jpg" alt="Image Title">
+                                <div class="pinned-section">
+                                    <div class="pinned-element left">
+                                        <h1 class="primary-font-title has-mask-fill">Urban Concentration</h1>
+                                   		<p><span class="has-opacity">DESPITE SOARING COSTS, POPULATION CONTINUES TO CONCENTRATE IN MAJOR CITIES WHERE OPPORTUNITIES EXIST BUT AFFORDABILITY DIMINISHES. BY 2050, 85% OF EUROPEANS WILL LIVE IN URBAN AREAS, FURTHER STRAINING HOUSING MARKETS AND SOCIAL INFRASTRUCTURE.</span></p>
                                     </div>
-                                    <div class="pinned-image">
-                                        <img src="images/projects/nano02.jpg" alt="Image Title">
-                                    </div>
-                                    <div class="pinned-image">
-                                        <img src="images/projects/nano03.jpg" alt="Image Title">
+                                    
+                                    <div class="scrolling-element right">
+                                        <figure class="has-animation">
+                                            <a href="images/projects/green02.jpg" class="image-link"><img src="images/houses/populationmap.png" alt="Image Title"></a>
+                                        </figure>
                                     </div>
                                 </div>
                                 
                             </div> 
-                            <!--/Row -->
-                            
-                            
-                            <!-- Row -->
-                            <div class="content-row small row_padding_bottom light-section change-header-color text-align-center" data-bgcolor="#eee">
+                            <div class="content-row full dark-section" data-bgcolor="#171717">
                                 
-                                <hr><hr>
+                                <figure class="has-parallax has-parallax-content" data-delay="100">
+                                    <img src="images/houses/portugalvilage.png" alt="portugalvilage">
+                                    <div class="parallax-image-content content-max-width text-align-center">
+                                        <div class="outer">
+                                            <div class="inner">                                                                                                
+                                                <h2 class="big-title primary-font-title" style="color: white; margin-bottom: 20px;">Meanwhile, 7.1 Million Houses Stand Empty in rural Areas</h2>
+                                                <p style="color: white; font-size: 1.2em;">A PARADOX OF ABUNDANCE AND SCARCITY: WHILE YOUNG PROFESSIONALS STRUGGLE TO FIND AFFORDABLE HOUSING IN CITIES, MILLIONS OF PROPERTIES REMAIN VACANT ACROSS THE COUNTRY, CREATING AN UNPRECEDENTED OPPORTUNITY FOR INNOVATIVE SOLUTIONS.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </figure>
                                 
+                            </div> 
+                            <div class="content-row text-align-center light-section change-header-color" data-bgcolor="#eee">
+                                
+                                <div class="pinned-gallery">
+                                    <div class="pinned-image">
+                                        <img src="images/houses/oldhouseold.png" alt="Image Title">
+                                    </div>
+                                    <div class="pinned-image">
+                                        <img src="images/houses/oldtriangle.png" alt="Image Title">
+                                    </div>
+                                    <div class="pinned-image">
+                                        <img src="images/houses/casa3up.png" alt="Image Title">
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="content-row row_padding_top light-section change-header-color text-align-center" data-bgcolor="#eee">
+                            
                                 <h1 class="primary-font-title has-mask-fill">The Solution</h1>
                                 <p>
                                     <span class="has-opacity">INNOVATIVE APPROACHES TO HOUSING ACCESSIBILITY</span>
@@ -266,8 +447,77 @@
                                     <span class="has-opacity">AND SUSTAINABLE COMMUNITY DEVELOPMENT</span>
                                 </p>
                                 
+                                <hr><hr>
+                                
+                            </div> 
+
+                            <div class="content-row light-section change-header-color text-align-center" data-bgcolor="#fff">
+                                
+                                <div class="reveal-gallery">
+                                    <div class="reveal-img">
+                                        <img src="images/houses/oldluxury.png">
+                                    </div>
+                                    <div class="reveal-img-fixed">
+                                        <img src="images/houses/ovalhousenew.png">
+                                    </div>
+                                    <div class="reveal-img">
+                                        <img src="images/houses/casa3luury.png">
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="content-row row_padding_top row_padding_bottom light-section change-header-color" data-bgcolor="#eee">
+                                
+                                <div class="pinned-section">
+                                    <div class="scrolling-element left">
+                                        <div class="image-compare">
+                                            <img class="image-before" src="images/houses/oldhouseold.png" alt="Before">
+                                            <img class="image-after" src="images/houses/oldluxury.png" alt="After">
+                                            <div class="slider-handle">
+                                                <div class="slider-line"></div>
+                                                <div class="slider-circle">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pinned-element right">
+                                        <h1 class="primary-font-title has-mask-fill">Rising Costs</h1>
+                                   		<p><span class="has-opacity">THE COST OF LIVING AND HOUSING CONTINUES TO SKYROCKET IN URBAN AREAS, WITH RENTAL PRICES CONSUMING UP TO 45% OF THE AVERAGE SALARY. THIS UNSUSTAINABLE TREND IS CREATING A GENERATION OF PERPETUAL RENTERS, UNABLE TO SAVE FOR THEIR FUTURE.</span></p>
+                                    </div>
+                                </div>                                
+                                
                             </div> 
                             <!--/Row -->
+                            
+                            
+                            <!-- Row -->
+                            <div class="content-row row_padding_top row_padding_bottom light-section change-header-color" data-bgcolor="#eee">                                
+                                
+                                <div class="pinned-section">
+                                    <div class="pinned-element left">
+                                        <h1 class="primary-font-title has-mask-fill">Urban Concentration</h1>
+                                   		<p><span class="has-opacity">DESPITE SOARING COSTS, POPULATION CONTINUES TO CONCENTRATE IN MAJOR CITIES WHERE OPPORTUNITIES EXIST BUT AFFORDABILITY DIMINISHES. BY 2050, 85% OF EUROPEANS WILL LIVE IN URBAN AREAS, FURTHER STRAINING HOUSING MARKETS AND SOCIAL INFRASTRUCTURE.</span></p>
+                                    </div>
+                                    
+                                    <div class="scrolling-element right">
+                                        <div class="image-compare">
+                                            <img class="image-before" src="images/houses/triangleabandonada.png" alt="Before">
+                                            <img class="image-after" src="images/houses/ovalhousenew.png" alt="After">
+                                            <div class="slider-handle">
+                                                <div class="slider-line"></div>
+                                                <div class="slider-circle">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div> 
                         
                         
                         </div>
@@ -389,6 +639,230 @@
     <script src="js/contact.js"></script>
     <script src="js/scripts.js"></script>
 
+    <style>
+    .image-compare {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .image-compare img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-before {
+        z-index: 1;
+        clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+    }
+
+    .slider-handle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 40px;
+        transform: translateX(-50%);
+        z-index: 2;
+        cursor: ew-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slider-line {
+        position: absolute;
+        width: 2px;
+        height: 100%;
+        background: white;
+        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    }
+
+    .slider-circle {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slider-circle i {
+        color: #8c6144;
+        font-size: 12px;
+        margin: 0 2px;
+    }
+
+    .chart-wrapper {
+        width: 100%;
+        height: 400px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .has-parallax {
+        position: relative;
+    }
+
+    .has-parallax::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+        z-index: 1;
+    }
+
+    .has-parallax img {
+        position: relative;
+        width: 100%;
+    }
+
+    .parallax-image-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        width: 100%;
+        max-width: 1200px;
+        padding: 0 50px;
+    }
+
+    .parallax-image-content .inner {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .parallax-image-content h2 {
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .parallax-image-content p {
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector('.image-compare');
+        const before = document.querySelector('.image-before');
+        const handle = document.querySelector('.slider-handle');
+        let isResizing = false;
+
+        function setPosition(x) {
+            const containerWidth = container.offsetWidth;
+            const position = Math.max(0, Math.min(x, containerWidth));
+            const percentage = (position / containerWidth) * 100;
+            
+            before.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
+            handle.style.left = `${percentage}%`;
+        }
+
+        handle.addEventListener('mousedown', function(e) {
+            isResizing = true;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isResizing) return;
+            
+            const containerRect = container.getBoundingClientRect();
+            const position = e.pageX - containerRect.left;
+            setPosition(position);
+        });
+
+        document.addEventListener('mouseup', function() {
+            isResizing = false;
+        });
+
+        // Touch events
+        handle.addEventListener('touchstart', function(e) {
+            isResizing = true;
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', function(e) {
+            if (!isResizing) return;
+            
+            const touch = e.touches[0];
+            const containerRect = container.getBoundingClientRect();
+            const position = touch.pageX - containerRect.left;
+            setPosition(position);
+        });
+
+        document.addEventListener('touchend', function() {
+            isResizing = false;
+        });
+
+        new Chart(document.getElementById('housingCostChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['2010', '2012', '2014', '2016', '2018', '2020', '2022'],
+                datasets: [{
+                    label: 'Housing Cost Index',
+                    data: [100, 105, 112, 125, 138, 150, 165],
+                    borderColor: '#8c6144',
+                    backgroundColor: 'rgba(140, 97, 68, 0.1)',
+                    fill: true
+                }, {
+                    label: 'Average Salary Index',
+                    data: [100, 102, 104, 107, 110, 112, 115],
+                    borderColor: 'rgba(70, 130, 180, 0.8)',
+                    backgroundColor: 'rgba(70, 130, 180, 0.1)',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Housing Costs vs Salary Growth (2010 = 100)',
+                        font: { size: 16, family: 'Poppins' }
+                    },
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    });
+    </script>
 
 </body>
 

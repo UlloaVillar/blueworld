@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+    <style>
+        .region {
+            fill: #f9f9f9;
+            stroke: #8c6144;
+            stroke-width: 2;
+            transition: fill 0.3s;
+        }
+        .region:hover {
+            fill: #8c6144;
+            cursor: pointer;
+        }
+        .region-high {
+            fill: #8c6144;
+        }
+        .region-text {
+            font-family: Poppins, sans-serif;
+            font-size: 12px;
+            fill: #333;
+        }
+    </style>
+    <g id="spain">
+        <!-- Regiones simplificadas -->
+        <path class="region region-high" d="M400,200 L450,250 L500,200 L450,150 Z" data-name="País Vasco"/>
+        <path class="region region-high" d="M300,300 L350,350 L400,300 L350,250 Z" data-name="Madrid"/>
+        <path class="region region-high" d="M500,300 L550,350 L600,300 L550,250 Z" data-name="Cataluña"/>
+        <path class="region" d="M200,400 L250,450 L300,400 L250,350 Z" data-name="Andalucía"/>
+        <!-- Añadir más regiones según sea necesario -->
+    </g>
+</svg> 
