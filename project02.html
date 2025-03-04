@@ -17,7 +17,27 @@
     <meta name="description" content="AI for Blue Economy" />
     <meta name="author" content="Eduardo Ulloa ">
     <meta charset="UTF-8" />    
-    <link rel="icon" type="image/ico" href="favicon.ico" />
+    <link rel="icon" type="image/ico" href="images/bllueworldlogo.ico" />
+    
+    <!-- Favicon tags -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/bllueworldlogo.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/bllueworldlogo.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/bllueworldlogo.ico">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://blueworld.ai/">
+    <meta property="og:title" content="Blue World - AI Solutions for Blue Economy">
+    <meta property="og:description" content="Transforming coastal and marine environments through AI-powered visualization and analysis for sustainable development and policy making.">
+    <meta property="og:image" content="images/cies/ciesupscaled.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://blueworld.ai/">
+    <meta property="twitter:title" content="Blue World - AI Solutions for Blue Economy">
+    <meta property="twitter:description" content="Transforming coastal and marine environments through AI-powered visualization and analysis for sustainable development and policy making.">
+    <meta property="twitter:image" content="images/cies/ciesupscaled.png">
+
     <link href="style.css" rel="stylesheet" />
     <link href="css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
@@ -1027,6 +1047,200 @@
         });
     });
     </script>
+
+    <script>
+    // Cache para recursos
+    const resourceCache = new Map();
+
+    // Función para cargar recursos en segundo plano
+    function backgroundLoad(urls) {
+        urls.forEach(url => {
+            if (!resourceCache.has(url)) {
+                const img = new Image();
+                img.src = url;
+                img.onload = () => {
+                    resourceCache.set(url, true);
+                };
+            }
+        });
+    }
+
+    // Función para inicializar los comparadores de imágenes
+    function initializeImageComparisons() {
+        const containers = document.querySelectorAll('.image-compare');
+        containers.forEach(container => {
+            const before = container.querySelector('.image-before');
+            const after = container.querySelector('.image-after');
+            const handle = container.querySelector('.slider-handle');
+
+            // Asegurarse de que las imágenes estén cargadas
+            Promise.all([
+                new Promise(resolve => {
+                    if (before.complete) resolve();
+                    else before.onload = resolve;
+                }),
+                new Promise(resolve => {
+                    if (after.complete) resolve();
+                    else after.onload = resolve;
+                })
+            ]).then(() => {
+                container.style.opacity = '1';
+                setPosition(container, container.offsetWidth / 2);
+            });
+
+            let isResizing = false;
+
+            function setPosition(container, x) {
+                const containerWidth = container.offsetWidth;
+                const position = Math.max(0, Math.min(x, containerWidth));
+                const percentage = (position / containerWidth) * 100;
+                before.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
+                handle.style.left = `${percentage}%`;
+            }
+
+            handle.addEventListener('mousedown', e => {
+                isResizing = true;
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', e => {
+                if (!isResizing) return;
+                const containerRect = container.getBoundingClientRect();
+                setPosition(container, e.pageX - containerRect.left);
+            });
+
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+            });
+
+            // Touch events
+            handle.addEventListener('touchstart', e => {
+                isResizing = true;
+                e.preventDefault();
+            });
+
+            document.addEventListener('touchmove', e => {
+                if (!isResizing) return;
+                const touch = e.touches[0];
+                const containerRect = container.getBoundingClientRect();
+                setPosition(container, touch.pageX - containerRect.left);
+            });
+
+            document.addEventListener('touchend', () => {
+                isResizing = false;
+            });
+        });
+    }
+
+    // Función para inicializar el carrusel y las gráficas
+    function initializeCarouselAndCharts() {
+        const container = document.querySelector('.carousel-container');
+        const slides = document.querySelectorAll('.carousel-slide');
+        const navLeft = document.querySelector('.carousel-nav.left');
+        const navRight = document.querySelector('.carousel-nav.right');
+        let currentIndex = 1;
+
+        // Inicializar las gráficas
+        document.querySelectorAll('.carousel-slide').forEach((slide, index) => {
+            initializeCharts(slide, index);
+        });
+
+        function updateCarousel(transition = true) {
+            const slideWidth = slides[0].offsetWidth;
+            const offset = -(currentIndex * slideWidth);
+            container.style.transition = transition ? 'transform 0.3s ease' : 'none';
+            container.style.transform = `translateX(${offset}px)`;
+        }
+
+        // Event listeners para navegación
+        navLeft?.addEventListener('click', () => {
+            currentIndex--;
+            updateCarousel();
+        });
+
+        navRight?.addEventListener('click', () => {
+            currentIndex++;
+            updateCarousel();
+        });
+
+        // Manejar scroll infinito
+        container?.addEventListener('transitionend', () => {
+            const totalSlides = container.children.length;
+            if (currentIndex === 0) {
+                currentIndex = totalSlides - 2;
+                updateCarousel(false);
+            }
+            if (currentIndex === totalSlides - 1) {
+                currentIndex = 1;
+                updateCarousel(false);
+            }
+        });
+
+        // Inicializar posición
+        updateCarousel(false);
+    }
+
+    // Inicialización principal
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar comparadores de imágenes inmediatamente
+        initializeImageComparisons();
+
+        // Inicializar carrusel y gráficas con un pequeño retraso
+        setTimeout(() => {
+            initializeCarouselAndCharts();
+        }, 100);
+
+        // Cargar recursos adicionales en segundo plano
+        const imagesToPreload = [
+            'images/houses/oldluxury.png',
+            'images/houses/ovalhousenew.png',
+            'images/houses/casa3luury.png',
+            'images/houses/oldhouseold.png',
+            'images/houses/triangleabandonada.png',
+            'images/houses/casa3up.png'
+        ];
+        backgroundLoad(imagesToPreload);
+    });
+
+    // Manejar transición AJAX
+    if (window.ClapatPageTransition) {
+        window.ClapatPageTransition.on('ajaxLoaded', function() {
+            initializeImageComparisons();
+            setTimeout(() => {
+                initializeCarouselAndCharts();
+            }, 100);
+        });
+    }
+    </script>
+
+    <style>
+    /* Estilos para la carga progresiva */
+    .image-compare {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .image-compare.loaded {
+        opacity: 1;
+    }
+
+    .chart-container {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .chart-container.loaded {
+        opacity: 1;
+    }
+
+    /* Mejorar la visibilidad durante la carga */
+    .carousel-slide {
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    </style>
 
 </body>
 

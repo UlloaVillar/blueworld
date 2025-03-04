@@ -426,6 +426,126 @@
     <script src="js/contact.js"></script>
     <script src="js/scripts.js"></script>
 
+    <!-- Preloader for project02 resources -->
+    <script>
+        // Cache global para recursos
+        window.resourceCache = {
+            images: new Map(),
+            scripts: new Map()
+        };
+
+        // Función para precargar imágenes
+        function preloadImage(url) {
+            return new Promise((resolve, reject) => {
+                if (window.resourceCache.images.has(url)) {
+                    resolve(url);
+                    return;
+                }
+
+                const img = new Image();
+                img.onload = () => {
+                    window.resourceCache.images.set(url, img);
+                    resolve(url);
+                };
+                img.onerror = () => reject(url);
+                img.src = url;
+            });
+        }
+
+        // Función para precargar scripts
+        function preloadScript(url) {
+            return new Promise((resolve, reject) => {
+                if (window.resourceCache.scripts.has(url)) {
+                    resolve(url);
+                    return;
+                }
+
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = url;
+                script.async = true;
+                script.onload = () => {
+                    window.resourceCache.scripts.set(url, true);
+                    resolve(url);
+                };
+                script.onerror = () => reject(url);
+                document.body.appendChild(script);
+            });
+        }
+
+        // Función para precargar project02
+        function preloadProject02() {
+            const imagesToPreload = [
+                'images/houses/portugalvilage.png',
+                'images/houses/hemeroteca.png',
+                'images/houses/populationmap.png',
+                'images/houses/oldhouseold.png',
+                'images/houses/oldtriangle.png',
+                'images/houses/casa3up.png',
+                'images/houses/oldluxury.png',
+                'images/houses/ovalhousenew.png',
+                'images/houses/casa3luury.png',
+                'images/houses/triangleabandonada.png'
+            ];
+
+            const scriptsToPreload = [
+                'https://cdn.jsdelivr.net/npm/chart.js',
+                'https://d3js.org/d3.v7.min.js',
+                'https://d3js.org/d3-scale-chromatic.v1.min.js',
+                'https://d3js.org/topojson.v3.min.js'
+            ];
+
+            return Promise.all([
+                ...imagesToPreload.map(url => preloadImage(url)),
+                ...scriptsToPreload.map(url => preloadScript(url))
+            ]);
+        }
+
+        // Integración con el sistema de transición AJAX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Precargar project02 cuando el mouse pase por encima del enlace
+            const project02Link = document.querySelector('a[href="project02.html"]');
+            if (project02Link) {
+                project02Link.addEventListener('mouseenter', () => {
+                    preloadProject02().then(() => {
+                        console.log('Project02 resources preloaded successfully');
+                    }).catch(err => {
+                        console.warn('Error preloading some resources:', err);
+                    });
+                });
+            }
+
+            // Modificar el comportamiento del enlace
+            if (project02Link) {
+                project02Link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Mostrar el preloader
+                    const preloader = document.querySelector('.preloader-wrap');
+                    if (preloader) preloader.style.display = 'block';
+
+                    // Intentar precargar recursos antes de la transición
+                    preloadProject02().then(() => {
+                        // Simular el clic original una vez que los recursos estén cargados
+                        window.location.href = 'project02.html';
+                    }).catch(() => {
+                        // Si falla la precarga, navegar de todos modos
+                        window.location.href = 'project02.html';
+                    });
+                });
+            }
+        });
+
+        // Iniciar precarga cuando la página esté completamente cargada
+        window.addEventListener('load', () => {
+            preloadProject02().then(() => {
+                console.log('Initial preload completed');
+            }).catch(err => {
+                console.warn('Initial preload error:', err);
+            });
+        });
+    </script>
+
 <style>
 .hero-video-wrapper {
     position: absolute;
