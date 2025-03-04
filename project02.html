@@ -227,100 +227,8 @@
                             </div> 
                             <!--/Row -->
 
-                            <style>
-                                .custom-carousel {
-                                    width: 100%;
-                                    position: relative;
-                                    padding: 0;
-                                    overflow: hidden;
-                                }
-                                
-                                .carousel-container {
-                                    display: flex;
-                                    justify-content: center;
-                                    gap: 60px;
-                                    width: 100%;
-                                    padding: 0 30px;
-                                    transition: transform 0.5s ease;
-                                }
-                                
-                                .carousel-slide {
-                                    width: calc(33.333% - 40px);
-                                    flex-shrink: 0;
-                                }
-                                
-                                .chart-container {
-                                    width: 100%;
-                                    height: 350px;
-                                    background: white;
-                                    padding: 25px;
-                                    border-radius: 10px;
-                                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                                    position: relative;
-                                }
-
-                                .carousel-nav {
-                                    position: absolute;
-                                    top: 0;
-                                    width: 50%;
-                                    height: 100%;
-                                    z-index: 10;
-                                    cursor: pointer;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    background: rgba(0,0,0,0);
-                                    transition: background 0.3s;
-                                }
-
-                                .carousel-nav:hover {
-                                    background: rgba(0,0,0,0.02);
-                                }
-
-                                .carousel-nav.left {
-                                    left: 0;
-                                }
-
-                                .carousel-nav.right {
-                                    right: 0;
-                                }
-
-                                @media (max-width: 768px) {
-                                    .carousel-container {
-                                        flex-direction: column;
-                                        align-items: center;
-                                        gap: 40px;
-                                        padding: 0;
-                                    }
-                                    
-                                    .carousel-slide {
-                                        width: 100%;
-                                        max-width: 500px;
-                                    }
-
-                                    .carousel-nav {
-                                        display: none;
-                                    }
-                                }
-                            </style>
-
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
-                                    const defaultOptions = {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        animation: {
-                                            duration: 0
-                                        },
-                                        plugins: {
-                                            legend: {
-                                                display: true,
-                                                position: 'top'
-                                            }
-                                        }
-                                    };
-
-                                    // Configuración del carrusel
                                     const container = document.querySelector('.carousel-container');
                                     const slides = document.querySelectorAll('.carousel-slide');
                                     const navLeft = document.querySelector('.carousel-nav.left');
@@ -329,13 +237,13 @@
 
                                     function updateCarousel() {
                                         const slideWidth = slides[0].offsetWidth;
-                                        const gap = 60; // El espacio entre slides
+                                        const gap = 60;
                                         const offset = -(currentIndex * (slideWidth + gap));
                                         container.style.transform = `translateX(${offset}px)`;
                                     }
 
                                     function moveCarousel(direction) {
-                                        if (window.innerWidth <= 768) return; // No mover en móvil
+                                        if (window.innerWidth <= 768) return;
 
                                         if (direction === 'left' && currentIndex > 0) {
                                             currentIndex--;
@@ -346,18 +254,10 @@
                                         updateCarousel();
                                     }
 
-                                    // Event listeners para navegación
                                     navLeft.addEventListener('click', () => moveCarousel('left'));
                                     navRight.addEventListener('click', () => moveCarousel('right'));
-
-                                    // Actualizar carrusel cuando cambia el tamaño de la ventana
                                     window.addEventListener('resize', updateCarousel);
-
-                                    // Inicializar carrusel
                                     updateCarousel();
-
-                                    // Gráficas...
-                                    // ... existing chart code ...
                                 });
                             </script>
 
@@ -484,8 +384,8 @@
                                     </div>
                                     
                                     <div class="pinned-element right">
-                                        <h1 class="primary-font-title has-mask-fill">Rising Costs</h1>
-                                   		<p><span class="has-opacity">THE COST OF LIVING AND HOUSING CONTINUES TO SKYROCKET IN URBAN AREAS, WITH RENTAL PRICES CONSUMING UP TO 45% OF THE AVERAGE SALARY. THIS UNSUSTAINABLE TREND IS CREATING A GENERATION OF PERPETUAL RENTERS, UNABLE TO SAVE FOR THEIR FUTURE.</span></p>
+                                        <h1 class="primary-font-title has-mask-fill">A Dream Home for Less Than €50,000? Yes, It's Possible</h1>
+                                   		<p><span class="has-opacity">Think owning a home is out of reach? In Madrid, a tiny apartment costs over €400,000, but in Galicia, you can buy a charming stone house for under €50K. The catch? It needs some work—but with a little vision, you could turn it into a stunning dream home for a fraction of city prices.</span></p>
                                     </div>
                                 </div>                                
                                 
@@ -498,8 +398,11 @@
                                 
                                 <div class="pinned-section">
                                     <div class="pinned-element left">
-                                        <h1 class="primary-font-title has-mask-fill">Urban Concentration</h1>
-                                   		<p><span class="has-opacity">DESPITE SOARING COSTS, POPULATION CONTINUES TO CONCENTRATE IN MAJOR CITIES WHERE OPPORTUNITIES EXIST BUT AFFORDABILITY DIMINISHES. BY 2050, 85% OF EUROPEANS WILL LIVE IN URBAN AREAS, FURTHER STRAINING HOUSING MARKETS AND SOCIAL INFRASTRUCTURE.</span></p>
+                                        <h1 class="primary-font-title has-mask-fill">💎 Luxury for €50K? Welcome to the Ultimate Life Hack</h1>
+                                   		<p><span class="has-opacity">Renovations in rural areas are shockingly affordable. With €50,000 to €100,000, you can upgrade a run-down house into a modern, high-end home—spacious living areas, sleek kitchens, spa-like bathrooms, and even a private garden. Instead of struggling to afford a 70m² flat in Madrid, you get a 200m² house, total freedom, and a lifestyle that city dwellers can only dream of.</span></p>
+                                        <br>
+                                        <h2 class="primary-font-title has-mask-fill">💰 More Money. More Comfort. More Life.</h2>
+                                        <p><span class="has-opacity">Less rent, lower taxes, fresh air, and no suffocating mortgage—this is what happens when you swap city chaos for smart living. With remote work on the rise, why pay triple the price to be crammed into a noisy, overpriced city, when you could live in luxury, surrounded by nature, for a fraction of the cost?</span></p>
                                     </div>
                                     
                                     <div class="scrolling-element right">
@@ -516,6 +419,31 @@
                                         </div>
                                     </div>
                                 </div>
+                                
+                            </div>
+                            
+                            <div class="content-row row_padding_top row_padding_bottom light-section change-header-color" data-bgcolor="#eee">
+                                
+                                <div class="pinned-section">
+                                    <div class="scrolling-element left">
+                                        <div class="image-compare">
+                                            <img class="image-before" src="images/houses/oldhouseold.png" alt="Before">
+                                            <img class="image-after" src="images/houses/oldluxury.png" alt="After">
+                                            <div class="slider-handle">
+                                                <div class="slider-line"></div>
+                                                <div class="slider-circle">
+                                                    <i class="fa fa-chevron-left"></i>
+                                                    <i class="fa fa-chevron-right"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pinned-element right">
+                                        <h1 class="primary-font-title has-mask-fill">A Dream Home for Less Than €50,000? Yes, It's Possible</h1>
+                                   		<p><span class="has-opacity">Think owning a home is out of reach? In Madrid, a tiny apartment costs over €400,000, but in Galicia, you can buy a charming stone house for under €50K. The catch? It needs some work—but with a little vision, you could turn it into a stunning dream home for a fraction of city prices.</span></p>
+                                    </div>
+                                </div>                                
                                 
                             </div> 
                         
@@ -643,24 +571,29 @@
     .image-compare {
         position: relative;
         width: 100%;
-        height: 500px;
+        height: auto;
         overflow: hidden;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        background: transparent;
     }
 
-    .image-compare img {
-        position: absolute;
-        top: 0;
-        left: 0;
+    .image-before,
+    .image-after {
+        display: block;
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
     }
 
     .image-before {
-        z-index: 1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
         clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+    }
+
+    .image-after {
+        position: relative;
+        z-index: 1;
     }
 
     .slider-handle {
@@ -670,7 +603,7 @@
         left: 50%;
         width: 40px;
         transform: translateX(-50%);
-        z-index: 2;
+        z-index: 3;
         cursor: ew-resize;
         display: flex;
         align-items: center;
@@ -682,184 +615,89 @@
         width: 2px;
         height: 100%;
         background: white;
-        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .slider-circle {
-        position: absolute;
         width: 40px;
         height: 40px;
-        background: white;
         border-radius: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        background: white;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
     .slider-circle i {
-        color: #8c6144;
+        color: #333;
         font-size: 12px;
         margin: 0 2px;
     }
 
-    .chart-wrapper {
-        width: 100%;
-        height: 400px;
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    .scrolling-element {
+        height: auto;
     }
 
-    .has-parallax {
-        position: relative;
-    }
-
-    .has-parallax::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
-        z-index: 1;
-    }
-
-    .has-parallax img {
-        position: relative;
-        width: 100%;
-    }
-
-    .parallax-image-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 2;
-        width: 100%;
-        max-width: 1200px;
-        padding: 0 50px;
-    }
-
-    .parallax-image-content .inner {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .parallax-image-content h2 {
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .parallax-image-content p {
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    .pinned-section {
+        display: flex;
+        align-items: flex-start;
     }
     </style>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const container = document.querySelector('.image-compare');
-        const before = document.querySelector('.image-before');
-        const handle = document.querySelector('.slider-handle');
-        let isResizing = false;
+        const containers = document.querySelectorAll('.image-compare');
+        
+        containers.forEach(container => {
+            const before = container.querySelector('.image-before');
+            const handle = container.querySelector('.slider-handle');
+            let isResizing = false;
 
-        function setPosition(x) {
-            const containerWidth = container.offsetWidth;
-            const position = Math.max(0, Math.min(x, containerWidth));
-            const percentage = (position / containerWidth) * 100;
-            
-            before.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
-            handle.style.left = `${percentage}%`;
-        }
-
-        handle.addEventListener('mousedown', function(e) {
-            isResizing = true;
-            e.preventDefault();
-        });
-
-        document.addEventListener('mousemove', function(e) {
-            if (!isResizing) return;
-            
-            const containerRect = container.getBoundingClientRect();
-            const position = e.pageX - containerRect.left;
-            setPosition(position);
-        });
-
-        document.addEventListener('mouseup', function() {
-            isResizing = false;
-        });
-
-        // Touch events
-        handle.addEventListener('touchstart', function(e) {
-            isResizing = true;
-            e.preventDefault();
-        });
-
-        document.addEventListener('touchmove', function(e) {
-            if (!isResizing) return;
-            
-            const touch = e.touches[0];
-            const containerRect = container.getBoundingClientRect();
-            const position = touch.pageX - containerRect.left;
-            setPosition(position);
-        });
-
-        document.addEventListener('touchend', function() {
-            isResizing = false;
-        });
-
-        new Chart(document.getElementById('housingCostChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['2010', '2012', '2014', '2016', '2018', '2020', '2022'],
-                datasets: [{
-                    label: 'Housing Cost Index',
-                    data: [100, 105, 112, 125, 138, 150, 165],
-                    borderColor: '#8c6144',
-                    backgroundColor: 'rgba(140, 97, 68, 0.1)',
-                    fill: true
-                }, {
-                    label: 'Average Salary Index',
-                    data: [100, 102, 104, 107, 110, 112, 115],
-                    borderColor: 'rgba(70, 130, 180, 0.8)',
-                    backgroundColor: 'rgba(70, 130, 180, 0.1)',
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Housing Costs vs Salary Growth (2010 = 100)',
-                        font: { size: 16, family: 'Poppins' }
-                    },
-                    legend: {
-                        position: 'top'
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0,0,0,0.1)'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            color: 'rgba(0,0,0,0.1)'
-                        }
-                    }
-                }
+            function setPosition(x) {
+                const containerWidth = container.offsetWidth;
+                const position = Math.max(0, Math.min(x, containerWidth));
+                const percentage = (position / containerWidth) * 100;
+                
+                before.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
+                handle.style.left = `${percentage}%`;
             }
+
+            handle.addEventListener('mousedown', function(e) {
+                isResizing = true;
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isResizing) return;
+                
+                const containerRect = container.getBoundingClientRect();
+                const position = e.pageX - containerRect.left;
+                setPosition(position);
+            });
+
+            document.addEventListener('mouseup', function() {
+                isResizing = false;
+            });
+
+            handle.addEventListener('touchstart', function(e) {
+                isResizing = true;
+                e.preventDefault();
+            });
+
+            document.addEventListener('touchmove', function(e) {
+                if (!isResizing) return;
+                
+                const touch = e.touches[0];
+                const containerRect = container.getBoundingClientRect();
+                const position = touch.pageX - containerRect.left;
+                setPosition(position);
+            });
+
+            document.addEventListener('touchend', function() {
+                isResizing = false;
+            });
         });
     });
     </script>
