@@ -205,21 +205,21 @@
                                     <div class="carousel-nav left"></div>
                                     <div class="carousel-nav right"></div>
                                     <div class="carousel-container">
-                                        <div class="carousel-slide">
+                                        <div class="carousel-slide" data-slide-index="0">
                                             <div class="chart-container">
-                                                <canvas id="salaryChart"></canvas>
+                                                <canvas id="salaryChart-1"></canvas>
                                             </div>
                                         </div>
                                         
-                                        <div class="carousel-slide">
+                                        <div class="carousel-slide" data-slide-index="1">
                                             <div class="chart-container">
-                                                <canvas id="emptyHousingChart"></canvas>
+                                                <canvas id="emptyHousingChart-1"></canvas>
                                             </div>
                                         </div>
                                         
-                                        <div class="carousel-slide">
+                                        <div class="carousel-slide" data-slide-index="2">
                                             <div class="chart-container">
-                                                <canvas id="unemploymentChart"></canvas>
+                                                <canvas id="unemploymentChart-1"></canvas>
                                             </div>
                                         </div>
                                     </div>
@@ -236,273 +236,312 @@
                                     const navRight = document.querySelector('.carousel-nav.right');
                                     let currentIndex = 0;
 
-                                    // Gráfica de Salarios vs Costos de Vivienda
-                                    const salaryCtx = document.getElementById('salaryChart').getContext('2d');
-                                    new Chart(salaryCtx, {
-                                        type: 'bar',
-                                        data: {
-                                            labels: ['2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
-                                            datasets: [{
-                                                label: 'Average Annual Salary (€)',
-                                                data: [19680, 20390, 21883, 22511, 22790, 22899, 22726, 22698, 22858, 23106, 23156, 23647, 24009, 24396, 25166, 25897, 26949],
-                                                backgroundColor: '#333333',
-                                                borderColor: '#333333',
-                                                borderWidth: 1,
-                                                yAxisID: 'y'
-                                            }, {
-                                                label: 'Annual Rent (90m²)',
-                                                data: [9504, 8856, 8316, 8208, 8316, 8748, 8100, 7776, 7884, 8100, 8964, 10260, 11232, 11772, 11988, 11448, 12312],
-                                                backgroundColor: '#8c6144',
-                                                borderColor: '#8c6144',
-                                                borderWidth: 1,
-                                                yAxisID: 'y'
-                                            }, {
-                                                label: 'Rent as % of Salary',
-                                                data: [48, 43, 38, 36, 36, 38, 36, 34, 34, 35, 39, 43, 47, 48, 48, 44, 46],
+                                    // Función para generar ID único
+                                    function generateUniqueId(baseId, index) {
+                                        return `${baseId}-${index}`;
+                                    }
+
+                                    // Función para inicializar las gráficas
+                                    function initializeCharts(element, index) {
+                                        // Gráfica de Salarios vs Alquiler
+                                        const salaryCanvas = element.querySelector('canvas[id^="salaryChart"]');
+                                        if (salaryCanvas) {
+                                            const ctx = salaryCanvas.getContext('2d');
+                                            new Chart(ctx, {
+                                                type: 'bar',
+                                                data: {
+                                                    labels: ['2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
+                                                    datasets: [
+                                                        {
+                                                            label: 'Average Annual Salary (€)',
+                                                            data: [19680, 20390, 21883, 22511, 22790, 22899, 22726, 22698, 22858, 23106, 23156, 23646, 24009, 24395, 24395, 25165, 26316],
+                                                            backgroundColor: '#333333',
+                                                            order: 1
+                                                        },
+                                                        {
+                                                            label: 'Annual Rent (90m²)',
+                                                            data: [8892, 9240, 9660, 9300, 9060, 8940, 8700, 8580, 8520, 8700, 9000, 9480, 10200, 11040, 11520, 11760, 12600],
+                                                            backgroundColor: '#8c6144',
+                                                            order: 2
+                                                        },
+                                                        {
+                                                            label: 'Rent as % of Salary',
+                                                            data: [45.18, 45.32, 44.14, 41.31, 39.75, 39.04, 38.28, 37.80, 37.27, 37.65, 38.87, 40.09, 42.48, 45.25, 47.22, 46.73, 47.88],
+                                                            type: 'line',
+                                                            borderColor: '#c17f59',
+                                                            backgroundColor: 'rgba(193, 127, 89, 0.2)',
+                                                            fill: true,
+                                                            yAxisID: 'percentage',
+                                                            order: 0
+                                                        }
+                                                    ]
+                                                },
+                                                options: {
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,
+                                                    scales: {
+                                                        y: {
+                                                            beginAtZero: true,
+                                                            title: {
+                                                                display: true,
+                                                                text: 'Euros (€)'
+                                                            },
+                                                            grid: {
+                                                                color: 'rgba(0, 0, 0, 0.1)'
+                                                            }
+                                                        },
+                                                        percentage: {
+                                                            position: 'right',
+                                                            beginAtZero: true,
+                                                            title: {
+                                                                display: true,
+                                                                text: 'Percentage (%)'
+                                                            },
+                                                            grid: {
+                                                                display: false
+                                                            }
+                                                        },
+                                                        x: {
+                                                            grid: {
+                                                                display: false
+                                                            }
+                                                        }
+                                                    },
+                                                    plugins: {
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Evolution of Salaries vs Rent in Spain (2006-2022)',
+                                                            font: {
+                                                                size: 16
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        // Gráfica de Viviendas Vacías
+                                        const housingCanvas = element.querySelector('canvas[id^="emptyHousingChart"]');
+                                        if (housingCanvas) {
+                                            const ctx = housingCanvas.getContext('2d');
+                                            new Chart(ctx, {
+                                                type: 'bar',
+                                                data: {
+                                                    labels: ['Spain', 'France', 'Portugal', 'Ireland'],
+                                                    datasets: [{
+                                                        label: 'Unoccupied Houses',
+                                                        data: [7124930, 5630895, 1868428, 345856],
+                                                        backgroundColor: ['#8c6144', '#a67b5b', '#c17f59', '#dba17c'],
+                                                        borderWidth: 1
+                                                    }]
+                                                },
+                                                options: {
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,
+                                                    scales: {
+                                                        y: {
+                                                            beginAtZero: true,
+                                                            title: {
+                                                                display: true,
+                                                                text: 'Number of Houses'
+                                                            }
+                                                        }
+                                                    },
+                                                    plugins: {
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Unoccupied Houses by Country (2011 Census)',
+                                                            font: {
+                                                                size: 16
+                                                            }
+                                                        },
+                                                        tooltip: {
+                                                            callbacks: {
+                                                                label: function(context) {
+                                                                    let label = context.dataset.label || '';
+                                                                    if (label) {
+                                                                        label += ': ';
+                                                                    }
+                                                                    label += context.parsed.y.toLocaleString();
+                                                                    return label;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        // Gráfica de Trabajo Remoto
+                                        const remoteWorkCanvas = element.querySelector('canvas[id^="unemploymentChart"]');
+                                        if (remoteWorkCanvas) {
+                                            const ctx = remoteWorkCanvas.getContext('2d');
+                                            new Chart(ctx, {
                                                 type: 'line',
-                                                borderColor: '#c17f59',
-                                                backgroundColor: 'rgba(193, 127, 89, 0.2)',
-                                                fill: true,
-                                                tension: 0.4,
-                                                yAxisID: 'y1'
-                                            }]
-                                        },
-                                        options: {
-                                            responsive: true,
-                                            maintainAspectRatio: false,
-                                            interaction: {
-                                                mode: 'index',
-                                                intersect: false,
-                                            },
-                                            scales: {
-                                                x: {
-                                                    grid: {
-                                                        display: false
-                                                    }
+                                                data: {
+                                                    labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023'],
+                                                    datasets: [
+                                                        {
+                                                            label: 'European Union',
+                                                            data: [5.1, 5.2, 5.4, 12.1, 13.3, 10.0, 8.9],
+                                                            borderColor: '#8c6144',
+                                                            backgroundColor: 'rgba(140, 97, 68, 0.1)',
+                                                            fill: true
+                                                        },
+                                                        {
+                                                            label: 'Portugal',
+                                                            data: [5.9, 6.1, 6.6, 13.8, 14.4, 8.0, 7.7],
+                                                            borderColor: '#a67b5b',
+                                                            backgroundColor: 'rgba(166, 123, 91, 0.1)',
+                                                            fill: true
+                                                        },
+                                                        {
+                                                            label: 'Spain',
+                                                            data: [4.3, 4.3, 4.8, 10.9, 9.4, 7.5, 7.1],
+                                                            borderColor: '#c17f59',
+                                                            backgroundColor: 'rgba(193, 127, 89, 0.1)',
+                                                            fill: true
+                                                        },
+                                                        {
+                                                            label: 'France',
+                                                            data: [6.7, 6.6, 7.0, 15.7, 17.0, 12.4, 10.8],
+                                                            borderColor: '#dba17c',
+                                                            backgroundColor: 'rgba(219, 161, 124, 0.1)',
+                                                            fill: true
+                                                        },
+                                                        {
+                                                            label: 'Ireland',
+                                                            data: [5.0, 6.5, 7.0, 21.5, 32.2, 25.4, 21.4],
+                                                            borderColor: '#e4b898',
+                                                            backgroundColor: 'rgba(228, 184, 152, 0.1)',
+                                                            fill: true
+                                                        }
+                                                    ]
                                                 },
-                                                y: {
-                                                    type: 'linear',
-                                                    display: true,
-                                                    position: 'left',
-                                                    title: {
-                                                        display: true,
-                                                        text: 'Euros (€)'
-                                                    },
-                                                    grid: {
-                                                        color: 'rgba(0, 0, 0, 0.1)'
-                                                    }
-                                                },
-                                                y1: {
-                                                    type: 'linear',
-                                                    display: true,
-                                                    position: 'right',
-                                                    title: {
-                                                        display: true,
-                                                        text: 'Percentage (%)'
-                                                    },
-                                                    grid: {
-                                                        drawOnChartArea: false
-                                                    },
-                                                    min: 0,
-                                                    max: 100
-                                                }
-                                            },
-                                            plugins: {
-                                                title: {
-                                                    display: true,
-                                                    text: 'Evolution of Salaries vs Rent in Spain (2006-2022)',
-                                                    color: '#333',
-                                                    font: {
-                                                        size: 16
-                                                    }
-                                                },
-                                                tooltip: {
-                                                    callbacks: {
-                                                        label: function(context) {
-                                                            let label = context.dataset.label || '';
-                                                            if (label) {
-                                                                label += ': ';
+                                                options: {
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,
+                                                    scales: {
+                                                        y: {
+                                                            beginAtZero: true,
+                                                            title: {
+                                                                display: true,
+                                                                text: 'Percentage (%)'
                                                             }
-                                                            if (context.dataset.label.includes('%')) {
-                                                                label += context.parsed.y + '%';
-                                                            } else {
-                                                                label += '€' + context.parsed.y;
-                                                            }
-                                                            return label;
                                                         }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    });
-
-                                    // Gráfica de Viviendas Vacías
-                                    const housingCtx = document.getElementById('emptyHousingChart').getContext('2d');
-                                    new Chart(housingCtx, {
-                                        type: 'bar',
-                                        data: {
-                                            labels: ['Spain', 'France', 'Portugal', 'Ireland'],
-                                            datasets: [{
-                                                label: 'Unoccupied Houses',
-                                                data: [7124930, 5630895, 1868428, 345856],
-                                                backgroundColor: [
-                                                    '#8c6144',
-                                                    '#333333',
-                                                    '#a67c59',
-                                                    '#c17f59'
-                                                ],
-                                                borderColor: '#ffffff',
-                                                borderWidth: 1
-                                            }]
-                                        },
-                                        options: {
-                                            responsive: true,
-                                            maintainAspectRatio: false,
-                                            scales: {
-                                                y: {
-                                                    beginAtZero: true,
-                                                    title: {
-                                                        display: true,
-                                                        text: 'Number of Houses'
                                                     },
-                                                    ticks: {
-                                                        callback: function(value) {
-                                                            return value.toLocaleString();
-                                                        }
-                                                    }
-                                                },
-                                                x: {
-                                                    grid: {
-                                                        display: false
-                                                    }
-                                                }
-                                            },
-                                            plugins: {
-                                                title: {
-                                                    display: true,
-                                                    text: 'Unoccupied Houses by Country (2011 Census)',
-                                                    color: '#333',
-                                                    font: {
-                                                        size: 16
-                                                    }
-                                                },
-                                                tooltip: {
-                                                    callbacks: {
-                                                        label: function(context) {
-                                                            return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} houses`;
+                                                    plugins: {
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Evolution of Remote Work in Europe (2017-2023)',
+                                                            font: {
+                                                                size: 16
+                                                            }
                                                         }
                                                     }
                                                 }
-                                            }
+                                            });
                                         }
+                                    }
+
+                                    // Clonar slides y asignar IDs únicos
+                                    const firstClone = slides[0].cloneNode(true);
+                                    const lastClone = slides[slides.length - 1].cloneNode(true);
+
+                                    // Actualizar IDs de los clones
+                                    firstClone.querySelector('canvas').id = generateUniqueId(firstClone.querySelector('canvas').id, 'clone-first');
+                                    lastClone.querySelector('canvas').id = generateUniqueId(lastClone.querySelector('canvas').id, 'clone-last');
+
+                                    container.appendChild(firstClone);
+                                    container.insertBefore(lastClone, slides[0]);
+
+                                    // Inicializar todas las gráficas
+                                    document.querySelectorAll('.carousel-slide').forEach((slide, index) => {
+                                        initializeCharts(slide, index);
                                     });
 
-                                    // Remote Work Chart
-                                    const unemploymentCtx = document.getElementById('unemploymentChart').getContext('2d');
-                                    new Chart(unemploymentCtx, {
-                                        type: 'line',
-                                        data: {
-                                            labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023'],
-                                            datasets: [{
-                                                label: 'European Union',
-                                                data: [5.1, 5.2, 5.4, 12.1, 13.3, 10.0, 8.9],
-                                                borderColor: '#333333',
-                                                backgroundColor: 'rgba(51, 51, 51, 0.1)',
-                                                fill: true,
-                                                tension: 0.4
-                                            }, {
-                                                label: 'Portugal',
-                                                data: [5.9, 6.1, 6.6, 13.8, 14.4, 8.0, 7.7],
-                                                borderColor: '#a67c59',
-                                                backgroundColor: 'rgba(166, 124, 89, 0.1)',
-                                                fill: true,
-                                                tension: 0.4
-                                            }, {
-                                                label: 'Spain',
-                                                data: [4.3, 4.3, 4.8, 10.9, 9.4, 7.5, 7.1],
-                                                borderColor: '#8c6144',
-                                                backgroundColor: 'rgba(140, 97, 68, 0.1)',
-                                                fill: true,
-                                                tension: 0.4
-                                            }, {
-                                                label: 'France',
-                                                data: [6.7, 6.6, 7.0, 15.7, 17.0, 12.4, 10.8],
-                                                borderColor: '#c17f59',
-                                                backgroundColor: 'rgba(193, 127, 89, 0.1)',
-                                                fill: true,
-                                                tension: 0.4
-                                            }, {
-                                                label: 'Ireland',
-                                                data: [5.0, 6.5, 7.0, 21.5, 32.2, 25.4, 21.4],
-                                                borderColor: '#d4a285',
-                                                backgroundColor: 'rgba(212, 162, 133, 0.1)',
-                                                fill: true,
-                                                tension: 0.4
-                                            }]
-                                        },
-                                        options: {
-                                            responsive: true,
-                                            maintainAspectRatio: false,
-                                            scales: {
-                                                y: {
-                                                    beginAtZero: true,
-                                                    title: {
-                                                        display: true,
-                                                        text: 'Percentage (%)'
-                                                    }
-                                                },
-                                                x: {
-                                                    grid: {
-                                                        display: false
-                                                    }
-                                                }
-                                            },
-                                            plugins: {
-                                                title: {
-                                                    display: true,
-                                                    text: 'Evolution of Remote Work in Europe (2017-2023)',
-                                                    color: '#333',
-                                                    font: {
-                                                        size: 16
-                                                    }
-                                                },
-                                                tooltip: {
-                                                    callbacks: {
-                                                        label: function(context) {
-                                                            return `${context.dataset.label}: ${context.parsed.y}%`;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    });
+                                    // Update currentIndex to start at first real slide
+                                    currentIndex = 1;
 
-                                    // Funciones del carrusel
-                                    function updateCarousel() {
+                                    function updateCarousel(transition = true) {
                                         const slideWidth = slides[0].offsetWidth;
-                                        const gap = 60;
-                                        const offset = -(currentIndex * (slideWidth + gap));
+                                        const offset = -(currentIndex * slideWidth);
+                                        container.style.transition = transition ? 'transform 0.3s ease' : 'none';
                                         container.style.transform = `translateX(${offset}px)`;
                                     }
 
                                     function moveCarousel(direction) {
-                                        if (window.innerWidth <= 768) return;
-
-                                        if (direction === 'left' && currentIndex > 0) {
+                                        container.style.transition = 'transform 0.3s ease';
+                                        if (direction === 'left') {
                                             currentIndex--;
-                                        } else if (direction === 'right' && currentIndex < slides.length - 1) {
+                                        } else if (direction === 'right') {
                                             currentIndex++;
                                         }
-                                        
                                         updateCarousel();
                                     }
 
+                                    // Handle infinite scroll
+                                    container.addEventListener('transitionend', () => {
+                                        const totalSlides = container.children.length;
+                                        
+                                        if (currentIndex === 0) {
+                                            container.style.transition = 'none';
+                                            currentIndex = totalSlides - 2;
+                                            container.style.transform = `translateX(${-(currentIndex * slides[0].offsetWidth)}px)`;
+                                        }
+                                        
+                                        if (currentIndex === totalSlides - 1) {
+                                            container.style.transition = 'none';
+                                            currentIndex = 1;
+                                            container.style.transform = `translateX(${-(currentIndex * slides[0].offsetWidth)}px)`;
+                                        }
+                                    });
+
+                                    // Initialize carousel
+                                    updateCarousel(false);
+
+                                    // Event listeners
                                     navLeft.addEventListener('click', () => moveCarousel('left'));
                                     navRight.addEventListener('click', () => moveCarousel('right'));
-                                    window.addEventListener('resize', updateCarousel);
-                                    updateCarousel();
+                                    window.addEventListener('resize', () => {
+                                        updateCarousel(false);
+                                    });
                                 });
                             </script>
+
+                            <style>
+                                .chart-container {
+                                    height: 400px;
+                                    width: 100%;
+                                    padding: 20px;
+                                    background: white;
+                                    border-radius: 10px;
+                                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                                }
+
+                                .carousel-container {
+                                    display: flex;
+                                    transition: transform 0.3s ease;
+                                    width: fit-content;
+                                }
+
+                                .carousel-slide {
+                                    flex: 0 0 100%;
+                                    width: 100%;
+                                    max-width: 1200px;
+                                    padding: 0 30px;
+                                    box-sizing: border-box;
+                                }
+
+                                .custom-carousel {
+                                    position: relative;
+                                    overflow: hidden;
+                                    width: 100%;
+                                    max-width: 100%;
+                                    padding: 0 60px;
+                                    margin: 0 auto;
+                                }
+                            </style>
 
                             <!-- Row -->
                              
@@ -897,13 +936,16 @@
 
     .carousel-container {
         display: flex;
-        gap: 60px;
         transition: transform 0.3s ease;
+        width: fit-content;
     }
 
     .carousel-slide {
         flex: 0 0 100%;
-        max-width: 800px;
+        width: 100%;
+        max-width: 1200px;
+        padding: 0 30px;
+        box-sizing: border-box;
     }
 
     .carousel-nav {
@@ -946,7 +988,10 @@
     .custom-carousel {
         position: relative;
         overflow: hidden;
+        width: 100%;
+        max-width: 100%;
         padding: 0 60px;
+        margin: 0 auto;
     }
     </style>
 
